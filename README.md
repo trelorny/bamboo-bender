@@ -14,17 +14,17 @@ By default the application
 As this is a project constiting of two parts (hardware with arduino and software with Java 8) the used components are listed seperately below.
 
 * Java 8
-** JSSC for communicating via parallel port
-** Quartz Scheduler
-** JAXP-API for XML parsing
-** Logback & SLF4J as Logging Framework
+  * JSSC for communicating via parallel port
+  * Quartz Scheduler
+  * JAXP-API for XML parsing
+  * Logback & SLF4J as Logging Framework
 
 * Arduino
-** Arduino UNO R3 (or similar)
-** RGB LED Module or different colored LEDs
-** Small Breadboard or circuit board
-** Optional Housing & one of a cardboard Futuramas Bender to give a face to the project
-** USB Cable 
-** Wires
-** Optional: Relay Module, External 12V rotating light + 12V Power Supply
+  * Arduino UNO R3 (or similar)
+  * RGB LED Module or different colored LEDs
+  * Small Breadboard or circuit board
+  * Optional Housing & one of a cardboard Futuramas Bender to give a face to the project
+  * USB Cable 
+  * Wires
+  * Optional: Relay Module, External 12V rotating light + 12V Power Supply
  
