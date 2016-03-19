@@ -33,7 +33,6 @@ As this is a project constiting of two parts (hardware with arduino and software
   * USB Cable 
   * Wires
   * Optional: Relay Module, External 12V rotating light + 12V Power Supply
-  * 
  
 ## Available parallel port commands
 | Command        | Effect                                                                                                            |
@@ -48,8 +47,9 @@ As this is a project constiting of two parts (hardware with arduino and software
 | MASTER_RED_OFF | Switches off red lights on secondary indicators                                                                   |
 | LOWER_CIGAR    | Switches the servo to be lowered (if not already in lowered position)                                             |
 | RAISE_CIGAR    | Switches the servo to be raised (if not already in raised position)                                               |
+| INDICATORS_OFF | Switches all the indicators of and shows a slow pulsing blue main indicator (could be used to show hibernation,etc.) |
 
-Commands can and should be concatenated using an arbitrary character, for example the pipe symbol "|". The string
+Commands can be concatenated using an arbitrary character, for example the pipe symbol "|". The string
 
 ``` BUILDING_ON|SUCCESS_ON|MASTER_RED_ON|LOWER_CIGAR ```
 
