@@ -48,6 +48,7 @@ As this is a project constiting of two parts (hardware with arduino and software
 | LOWER_CIGAR    | Switches the servo to be lowered (if not already in lowered position)                                             |
 | RAISE_CIGAR    | Switches the servo to be raised (if not already in raised position)                                               |
 | INDICATORS_OFF | Switches all the indicators of and shows a slow pulsing blue main indicator (could be used to show hibernation,etc.) |
+| INDICATORS_ON  | Re-Enables the visual indicators (could be used to wake up after hibernation)                                     |
 
 Commands can be concatenated using an arbitrary character, for example the pipe symbol "|". The string
 
