@@ -4,14 +4,17 @@
 
 #include <Servo.h>
 #define rightEyePin 2
-#define servoPin 3
+#define servoPin 3 //PWM
 #define leftEyePin 4
-#define blueLedPin 5    
-#define greenLedPin 6
+#define blueLedPin 5 //PWM
+#define greenLedPin 6 //PWM
+#define burningCigarPin 7
+//PIN 8
 //PWM on PIN 9 disabled due to Servo
-//PWM on PIN 10 disabled due to Servo
-#define redLedPin 11    
+//PWM on PIN 10 disabled due to Servo 
+#define redLedPin 11 //PWM   
 #define relayPin 12
+//PIN 13
 
 Servo myservo;
 
@@ -24,7 +27,7 @@ bool success = false;
 bool building = false;
 bool systemenabled = true;
 bool masterRed = false;
-boolean cigardown = false;
+boolean cigarup = true;
 
 /**
  * Used for parallel port communication
@@ -34,13 +37,13 @@ String comdata = "";
 /**
  * Servo-Values to indicate a lowered and a raised cigar - adjust if needed!
  */
-static int cigarLowered = 120;
-static int cigarUp = 35;
+static int cigarLoweredAngle = 115;
+static int cigarRaisedAngle = 35;
 
 /**
  * Enable & Disable demo mode on startup
  */
-static boolean demoModeEnabled = true;
+static boolean demoModeEnabled = false;
 
 void setup (){
   /**
@@ -52,44 +55,58 @@ void setup (){
   pinMode(relayPin,OUTPUT);
   pinMode(leftEyePin,OUTPUT);
   pinMode(rightEyePin,OUTPUT);
+  pinMode(burningCigarPin,OUTPUT);
 
+  
+    
+  //Demo at startup
+  if(demoModeEnabled == true){
+    demo();
+  }
+  
   /**
    * Initialize parallel port with default values
    */
   Serial.begin(9600);  
   Serial.print("Your command please:");  
   Serial.println();
-    
-  //Demo at startup
-  if(demoModeEnabled == true){
-    demo();
-  }
+  systemenabled = true;
 }
 
 void lowerCigar(){
   //Find out wether cigar was lowered already
   int currentServoAngle = myservo.read();
-  if(currentServoAngle != cigarLowered){
+  if(currentServoAngle != cigarLoweredAngle){
     if(myservo.attached() == false){
       myservo.attach(servoPin);
       delay(1000);//wait for a second
     }
-    myservo.write(cigarLowered);
+    myservo.write(cigarLoweredAngle);
     delay(1000);//wait for a second
     myservo.detach();
     delay(1000);//wait for a second
   }
+  //Lighting the cigar
+  for(int i = 250;i > 0;i=i-50){
+    digitalWrite(burningCigarPin,LOW);
+    delay(i);
+    digitalWrite(burningCigarPin,HIGH);
+    delay(i-25);
+  }
+  
+  digitalWrite(burningCigarPin,HIGH);
 }
 
 void raiseCigar(){
+  digitalWrite(burningCigarPin,LOW);
   //Find out wether cigar was lowered already
   int currentServoAngle = myservo.read();
-  if(currentServoAngle != cigarUp){
+  if(currentServoAngle != cigarRaisedAngle){
     if(myservo.attached() == false){
       myservo.attach(servoPin);
       delay(1000);//wait for a second
     }
-    myservo.write(cigarUp);
+    myservo.write(cigarRaisedAngle);
     delay(1000);//wait for a second
     myservo.detach();
     delay(1000);//wait for a second
@@ -137,15 +154,15 @@ void loop(){
     masterRed = false;
   }
   if(comdata.indexOf("LOWER_CIGAR") > -1){
-    cigardown = true;
+    cigarup = false;
   }
   if(comdata.indexOf("RAISE_CIGAR") > -1){
-    cigardown = false;
+    cigarup = true;
   }
   if(comdata.indexOf("INDICATORS_OFF") > -1){
     systemenabled = false;
   } 
-  if(comdata.indexOf("INDICATORS_ON") > -1){{
+  if(comdata.indexOf("INDICATORS_ON") > -1){
     systemenabled = true;
   }
 
@@ -161,10 +178,10 @@ void loop(){
       analogWrite(leftEyePin,0);
       analogWrite(rightEyePin, 0);
     }
-    if(cigardown == true){
-      lowerCigar();
-    } else {
+    if(cigarup == true){
       raiseCigar();
+    } else {
+      lowerCigar();
     }
     if(building == true){
       blinkBuildingLED();  
@@ -182,7 +199,7 @@ void loop(){
     blinkBlueLED();
   }
 }
-}
+
 
 void eyesRed(){
     analogWrite(leftEyePin, 255);
@@ -255,9 +272,7 @@ void blinkBlueLED ()
 void demo(){
   
   // Check cigar
-  raiseCigar();
   lowerCigar();
-  raiseCigar();
 
   //Check Main- & Secondary indicators
   for(int i = 0;i<3;i++){
