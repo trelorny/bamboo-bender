@@ -30,6 +30,12 @@ Although this is a project is consisting of two parts (hardware with arduino and
   * Wires
   * Optional: Relay Module, External 12V rotating light + 12V Power Supply
   * Optional Housing & one of a cardboard Futuramas Bender to give a face to the project
+  * 
+  
+The setup is as follows:
+<img src="https://github.com/trelorny/bamboo-bender/blob/master/benderindicator/Sketch.png" 
+alt="IMAGE ALT TEXT HERE" width="1024" border="10" />
+
  
 ## Available parallel port commands
 | Command        | Effect                                                                                                            |
