@@ -30,6 +30,12 @@ bool masterRed = false;
 boolean cigarup = true;
 
 /**
+ * Info for hibernation
+ */
+unsigned long currentMillis = 0;
+unsigned long lastCommandReceivedMillis = 0;
+
+/**
  * Used for parallel port communication
  */
 String comdata = "";
@@ -63,57 +69,20 @@ void setup (){
   if(demoModeEnabled == true){
     demo();
   }
+
+  myservo.attach(servoPin);
   
   /**
    * Initialize parallel port with default values
    */
   Serial.begin(9600);  
-  Serial.print("Your command please:");  
-  Serial.println();
+  Serial.println("Your command please:");  
   systemenabled = true;
 }
 
-void lowerCigar(){
-  //Find out wether cigar was lowered already
-  int currentServoAngle = myservo.read();
-  if(currentServoAngle != cigarLoweredAngle){
-    if(myservo.attached() == false){
-      myservo.attach(servoPin);
-      delay(1000);//wait for a second
-    }
-    myservo.write(cigarLoweredAngle);
-    delay(1000);//wait for a second
-    myservo.detach();
-    delay(1000);//wait for a second
-  }
-  //Lighting the cigar
-  for(int i = 250;i > 0;i=i-50){
-    digitalWrite(burningCigarPin,LOW);
-    delay(i);
-    digitalWrite(burningCigarPin,HIGH);
-    delay(i-25);
-  }
-  
-  digitalWrite(burningCigarPin,HIGH);
-}
-
-void raiseCigar(){
-  digitalWrite(burningCigarPin,LOW);
-  //Find out wether cigar was lowered already
-  int currentServoAngle = myservo.read();
-  if(currentServoAngle != cigarRaisedAngle){
-    if(myservo.attached() == false){
-      myservo.attach(servoPin);
-      delay(1000);//wait for a second
-    }
-    myservo.write(cigarRaisedAngle);
-    delay(1000);//wait for a second
-    myservo.detach();
-    delay(1000);//wait for a second
-  }
-}
-
 void loop(){
+  currentMillis = millis();
+  
   //read string from serial monitor
   if(Serial.available()>0)  // if we get a valid byte, read analog ins:
   {  
@@ -124,6 +93,13 @@ void loop(){
       delay(2);
     }
     Serial.println(comdata);
+    lastCommandReceivedMillis = millis();
+  }
+
+  if(currentMillis > lastCommandReceivedMillis + 60000){ //One minute without command - maybe client disconnected
+     systemenabled = false;
+  } else {
+     systemenabled = true;
   }
 
   //Determine submitted commands
@@ -265,6 +241,38 @@ void blinkBlueLED ()
   for (int a=64; a>=0;a--){
     analogWrite(blueLedPin, a);
     delay(delaytime);
+  }
+}
+
+void lowerCigar(){
+  //Find out wether cigar was lowered already
+  delay(1000);
+  int currentServoAngle = myservo.read();
+  Serial.println("Angle:" + currentServoAngle);
+  if(currentServoAngle != cigarLoweredAngle){
+    myservo.write(cigarLoweredAngle);
+    
+    
+    //Lighting the cigar
+    for(int i = 250;i > 0;i=i-50){
+      digitalWrite(burningCigarPin,LOW);
+      delay(i);
+      digitalWrite(burningCigarPin,HIGH);
+      delay(i-25);
+    }
+  
+    delay(1000);//wait for a second
+  }
+  
+  digitalWrite(burningCigarPin,HIGH);
+}
+
+void raiseCigar(){
+  digitalWrite(burningCigarPin,LOW);
+  //Find out wether cigar was lowered already
+  int currentServoAngle = myservo.read();
+  if(currentServoAngle != cigarRaisedAngle){
+    myservo.write(cigarRaisedAngle);
   }
 }
 
